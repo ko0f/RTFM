@@ -2,6 +2,13 @@ import matplotlib.pyplot as plt
 import torch
 from sklearn.metrics import auc, roc_curve, precision_recall_curve
 import numpy as np
+import os
+
+'''
+Feeds all test features of all test files into our model, then compares predicted Y with our ground truth Y array.
+
+Creates a ROC curve based on comparison between those two above.
+'''
 
 def test(dataloader, model, args, viz, device):
     with torch.no_grad():
@@ -27,15 +34,15 @@ def test(dataloader, model, args, viz, device):
         pred = np.repeat(np.array(pred), 16)
 
         fpr, tpr, threshold = roc_curve(list(gt), pred)
-        np.save('fpr.npy', fpr)
-        np.save('tpr.npy', tpr)
+        np.save(os.path.join(args.output_path, 'fpr.npy'), fpr)
+        np.save(os.path.join(args.output_path, 'tpr.npy'), tpr)
         rec_auc = auc(fpr, tpr)
         print('auc : ' + str(rec_auc))
 
         precision, recall, th = precision_recall_curve(list(gt), pred)
         pr_auc = auc(recall, precision)
-        np.save('precision.npy', precision)
-        np.save('recall.npy', recall)
+        np.save(os.path.join(args.output_path, 'precision.npy'), precision)
+        np.save(os.path.join(args.output_path, 'recall.npy'), recall)
         viz.plot_lines('pr_auc', pr_auc)
         viz.plot_lines('auc', rec_auc)
         viz.lines('scores', pred)
