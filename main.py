@@ -11,7 +11,7 @@ from tqdm import tqdm
 from utils import Visualizer
 from config import *
 
-viz = Visualizer(env='shanghai tech 10 crop', use_incoming_socket=False)
+viz = Visualizer(env='rtfm', use_incoming_socket=False)
 
 if __name__ == '__main__':
     args = option.parser.parse_args()
@@ -44,7 +44,9 @@ if __name__ == '__main__':
     test_info = {"epoch": [], "test_AUC": []}
     best_AUC = -1
     
-    auc = test(test_loader, model, args, viz, device)
+    gt = np.load(args.gt)
+
+    auc = test(test_loader, model, args, viz, device, gt)
 
     print("Using CUDA:", next(model.parameters()).is_cuda)
 
@@ -67,7 +69,7 @@ if __name__ == '__main__':
 
         if epoch % 5 == 0 and epoch > 200:
 
-            auc = test(test_loader, model, args, viz, device)
+            auc = test(test_loader, model, args, viz, device, gt)
             test_info["epoch"].append(epoch)
             test_info["test_AUC"].append(auc)
 

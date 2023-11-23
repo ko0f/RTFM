@@ -10,17 +10,10 @@ class Dataset(data.Dataset):
     def __init__(self, args, is_normal=True, transform=None, test_mode=False):
         self.modality = args.modality
         self.is_normal = is_normal
-        self.dataset = args.dataset
-        if self.dataset == 'shanghai':
-            if test_mode:
-                self.rgb_list_file = 'list/shanghai-i3d-test-10crop.list'
-            else:
-                self.rgb_list_file = 'list/shanghai-i3d-train-10crop.list'
+        if test_mode:
+            self.file_list = args.list_test
         else:
-            if test_mode:
-                self.rgb_list_file = 'list/ucf-i3d-test.list'
-            else:
-                self.rgb_list_file = 'list/ucf-i3d.list'
+            self.file_list = args.list_train
 
         self.tranform = transform
         self.test_mode = test_mode
@@ -30,27 +23,9 @@ class Dataset(data.Dataset):
 
 
     def _parse_list(self):
-        self.list = list(open(self.rgb_list_file))
-        if self.test_mode is False:
-            if self.dataset == 'shanghai':
-                if self.is_normal:
-                    self.list = self.list[63:]
-                    print('normal list for shanghai tech')
-                    print(self.list)
-                else:
-                    self.list = self.list[:63]
-                    print('abnormal list for shanghai tech')
-                    print(self.list)
-
-            elif self.dataset == 'ucf':
-                if self.is_normal:
-                    self.list = self.list[810:]
-                    print('normal list for ucf')
-                    print(self.list)
-                else:
-                    self.list = self.list[:810]
-                    print('abnormal list for ucf')
-                    print(self.list)
+        all_files = list(open(self.file_list))
+        if not self.test_mode:
+            self.list = [k for k in all_files if self.is_normal and 'abnormal' not in k or not self.is_normal and 'abnormal' in k]
 
     def __getitem__(self, index):
 

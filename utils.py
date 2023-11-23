@@ -34,7 +34,7 @@ def process_feat(feat, length):
     
     r = np.linspace(0, len(feat), length+1, dtype=np.int)
     for i in range(length):
-        if r[i]!=r[i+1]:
+        if r[i] != r[i+1]:
             new_feat[i,:] = np.mean(feat[r[i]:r[i+1],:], 0)
         else:
             new_feat[i,:] = feat[r[i],:]

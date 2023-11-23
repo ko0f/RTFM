@@ -10,7 +10,7 @@ Feeds all test features of all test files into our model, then compares predicte
 Creates a ROC curve based on comparison between those two above.
 '''
 
-def test(dataloader, model, args, viz, device):
+def test(dataloader, model, args, viz, device, gt):
     with torch.no_grad():
         model.eval()
         pred = torch.zeros(0, device=device)
@@ -24,11 +24,6 @@ def test(dataloader, model, args, viz, device):
             logits = torch.mean(logits, 0)
             sig = logits
             pred = torch.cat((pred, sig))
-
-        if args.dataset == 'shanghai':
-            gt = np.load('list/gt-sh.npy')
-        else:
-            gt = np.load('list/gt-ucf.npy')
 
         pred = list(pred.cpu().detach().numpy())
         pred = np.repeat(np.array(pred), 16)

@@ -6,12 +6,22 @@ from scipy.io import loadmat
 from os import walk
 
 '''
+Ground Truth file is the Y of our dataset.
+
+This script reads Matlab files with start-end frame indexes of abnormal events, then 
+creates a `gt` array with 0/1 values for normal/abnormal frames, each item represents a 
+frame. All video Y labels are concatinated into one big `gt` array.
+
+The extracted feature npy files are only used to validate number of frames against matlab files.
+'''
+
+'''
 FOR UCF CRIME
 '''
-root_path = "/home/yu/yu_ssd/i3d_features_test/"
-dirs = os.listdir(root_path)
-rgb_list_file ='ucf-i3d-test.list'
-temporal_root = '/home/yu/PycharmProjects/DeepMIL-master/list/Matlab_formate/'
+# root_path = "/home/yu/yu_ssd/i3d_features_test/"
+# dirs = os.listdir(root_path)
+rgb_list_file ='list/ucf-i3d-test.list'
+temporal_root = 'list/Matlab_formate/'
 mat_name_list = os.listdir(temporal_root)
 
 file_list = list(open(rgb_list_file))
@@ -20,7 +30,7 @@ gt = []
 for file in file_list:
 
     features = np.load(file.strip('\n'), allow_pickle=True)
-    features = [t.cpu().detach().numpy() for t in features]
+    # features = [t.cpu().detach().numpy() for t in features]
     features = np.array(features, dtype=np.float32)
     num_frame = features.shape[0] * 16
 
@@ -102,7 +112,7 @@ for file in file_list:
 
 
 
-output_file = '/home/yu/PycharmProjects/DeepMIL-master/list/gt-ucf.npy'
+output_file = 'list/gt-ucf.npy'
 gt = np.array(gt, dtype=float)
 np.save(output_file, gt)
 print(len(gt))
