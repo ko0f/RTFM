@@ -48,10 +48,11 @@ class SigmoidCrossEntropyLoss(torch.nn.Module):
 
 
 class RTFM_loss(torch.nn.Module):
-    def __init__(self, alpha, margin):
+    def __init__(self, alpha, margin, use_cuda):
         super(RTFM_loss, self).__init__()
         self.alpha = alpha
         self.margin = margin
+        self.use_cuda = use_cuda
         self.sigmoid = torch.nn.Sigmoid()
         self.mae_criterion = SigmoidMAELoss()
         self.criterion = torch.nn.BCELoss()
@@ -64,7 +65,8 @@ class RTFM_loss(torch.nn.Module):
         score = torch.cat((score_normal, score_abnormal), 0)
         score = score.squeeze()
 
-        label = label.cuda()
+        if self.use_cuda:
+            label = label.cuda()
 
         loss_cls = self.criterion(score, label)  # BCE loss in the score space
 
@@ -99,7 +101,7 @@ def train(nloader, aloader, model, batch_size, optimizer, viz, device):
         nlabel = nlabel[0:batch_size]
         alabel = alabel[0:batch_size]
 
-        loss_criterion = RTFM_loss(0.0001, 100)
+        loss_criterion = RTFM_loss(0.0001, 100, device.type == 'cuda')
         loss_sparse = sparsity(abn_scores, batch_size, 8e-3)
         loss_smooth = smooth(abn_scores, 8e-4)
         cost = loss_criterion(score_normal, score_abnormal, nlabel, alabel, feat_select_normal, feat_select_abn) + loss_smooth + loss_sparse

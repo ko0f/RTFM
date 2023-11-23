@@ -46,7 +46,7 @@ if __name__ == '__main__':
     
     gt = np.load(args.gt)
 
-    auc = test(test_loader, model, args, viz, device, gt)
+    # auc = test(test_loader, model, args, viz, device, gt)
 
     print("Using CUDA:", next(model.parameters()).is_cuda)
 

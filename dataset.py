@@ -3,6 +3,8 @@ import numpy as np
 from utils import process_feat
 import torch
 from torch.utils.data import DataLoader
+import csv
+
 torch.set_default_tensor_type('torch.FloatTensor')
 
 
@@ -23,9 +25,16 @@ class Dataset(data.Dataset):
 
 
     def _parse_list(self):
-        all_files = list(open(self.file_list))
+        rows = []
+        with open(self.file_list) as csvfile:
+            reader = csv.DictReader(csvfile, fieldnames=['fn'])
+            for row in reader:
+                rows.append(row)
+
         if not self.test_mode:
-            self.list = [k for k in all_files if self.is_normal and 'abnormal' not in k or not self.is_normal and 'abnormal' in k]
+            self.list = [k['fn'] for k in rows if self.is_normal and 'abnormal' not in k['fn'] or not self.is_normal and 'abnormal' in k['fn']]
+        else:
+            self.list = [k['fn'] for k in rows]
 
     def __getitem__(self, index):
 
