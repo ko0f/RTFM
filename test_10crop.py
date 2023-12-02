@@ -32,7 +32,7 @@ def test(dataloader, model, args, viz, device, gt):
         np.save(os.path.join(args.output_path, 'fpr.npy'), fpr)
         np.save(os.path.join(args.output_path, 'tpr.npy'), tpr)
         rec_auc = auc(fpr, tpr)
-        print('auc : ' + str(rec_auc))
+        # print('auc : ' + str(rec_auc))
 
         precision, recall, th = precision_recall_curve(list(gt), pred)
         pr_auc = auc(recall, precision)

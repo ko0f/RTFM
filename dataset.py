@@ -22,6 +22,7 @@ class Dataset(data.Dataset):
         self._parse_list()
         self.num_frame = 0
         self.labels = None
+        print('LIST test {0}, is_normal {1}\n{2}\n----------------------------------------------------'.format(test_mode, is_normal, self.list))
 
 
     def _parse_list(self):
